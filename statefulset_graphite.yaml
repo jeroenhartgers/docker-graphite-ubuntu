@@ -8,7 +8,7 @@ metadata:
     app: graphite
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: graphite
-    app.kubernetes.io/version: 1.0.0
+    app.kubernetes.io/version: 1.1.0
   name: graphite
   namespace: graphite
 spec:
@@ -24,22 +24,12 @@ spec:
       labels:
         app: graphite
     spec:
-      affinity:
-        nodeAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - preference:
-                matchExpressions:
-                  - key: node
-                    operator: In
-                    values:
-                      - b
-              weight: 100
       containers:
         - envFrom:
             - secretRef:
                 name: graphite
                 optional: false
-          image: YOUR.REPO.COM/graphite/graphite-ubuntu:1.0.0
+          image: YOUR.REPO.COM/graphite/graphite-ubuntu:1.1.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 3
@@ -73,9 +63,9 @@ spec:
             periodSeconds: 10
           resources:
             requests:
-              memory: 320Mi
+              memory: 360Mi
             limits:
-              memory: 1536Mi
+              memory: 1024Mi
           securityContext:
             allowPrivilegeEscalation: true
             capabilities: {}

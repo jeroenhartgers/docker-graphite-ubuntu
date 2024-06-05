@@ -21,17 +21,16 @@ RUN  apt-get -y install  \
 # Fix import imp problem in Python 3.12
 RUN sed -i "s/import\ imp/import\ importlib/g" /usr/lib/python3/dist-packages/carbon/routers.py
 
-# Remove warning "CryptographyDeprecationWarning: CAST5 has been deprecated"
+# Remove warning "CryptographyDeprecationWarning: CAST5 has been deprecated" and "CryptographyDeprecationWarning: Blowfish has been deprecated"
 RUN sed -i "/cast128-cbc/d" /usr/lib/python3/dist-packages/twisted/conch/ssh/transport.py \
- && sed -i "/cast128-ctr/d" /usr/lib/python3/dist-packages/twisted/conch/ssh/transport.py
-
-# Remove warning "CryptographyDeprecationWarning: Blowfish has been deprecated"
-RUN sed -i "/blowfish-cbc/d" /usr/lib/python3/dist-packages/twisted/conch/ssh/transport.py \
+ && sed -i "/cast128-ctr/d" /usr/lib/python3/dist-packages/twisted/conch/ssh/transport.py \
+ && sed -i "/blowfish-cbc/d" /usr/lib/python3/dist-packages/twisted/conch/ssh/transport.py \
  && sed -i "/blowfish-ctr/d" /usr/lib/python3/dist-packages/twisted/conch/ssh/transport.py
 
-# Carbon Cache
+# Carbon Cache / Log rotation of carbon
 RUN sed -i s/CARBON_CACHE_ENABLED=false/CARBON_CACHE_ENABLED=true/g /etc/default/graphite-carbon \
- && service carbon-cache start
+ && sed -i s/ENABLE_LOGROTATION\ =\ False/ENABLE_LOGROTATION\ =\ True/g /etc/carbon/carbon.conf \
+ && service carbon-cache start \
 
 COPY etc/graphite/local_settings.py /etc/graphite/local_settings.py
 
